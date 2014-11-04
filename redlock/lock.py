@@ -1,6 +1,6 @@
 """Distributed locks with Redis
 """
-
+from __future__ import division
 from datetime import datetime
 import random
 import time
@@ -31,7 +31,7 @@ class RedLockFactory(object):
             node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
-            self.quorum = len(self.redis_nodes) / 2 + 1
+            self.quorum = len(self.redis_nodes) // 2 + 1
 
     def create_lock(self, **kwargs):
         lock = RedLock(created_by_factory=True, **kwargs)
@@ -67,7 +67,7 @@ class RedLock(object):
             node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
-        self.quorum = len(self.redis_nodes) / 2 + 1
+        self.quorum = len(self.redis_nodes) // 2 + 1
 
     def __enter__(self):
         self.acquire()
@@ -93,7 +93,7 @@ class RedLock(object):
                     acquired_node_count += 1
 
             end_time = datetime.utcnow()
-            elapsed_milliesconds = (end_time - start_time).microseconds / 1000
+            elapsed_milliesconds = (end_time - start_time).microseconds // 1000
 
             # Add 2 milliseconds to the drift to account for Redis expires
             # precision, which is 1 milliescond, plus 1 millisecond min drift
@@ -105,7 +105,7 @@ class RedLock(object):
             else:
                 for node in self.redis_nodes:
                     self.release_node(node)
-                time.sleep(random.randint(0, self.retry_delay)/1000.0)
+                time.sleep(random.randint(0, self.retry_delay)/1000)
         return False
 
     def release(self):
