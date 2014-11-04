@@ -24,7 +24,7 @@ RELEASE_LUA_SCRIPT = """
 
 class RedLockFactory(object):
 
-    def __init__(self , connections):
+    def __init__(self, connections):
         self.redis_nodes = []
 
         for conn in connections:
@@ -39,8 +39,6 @@ class RedLockFactory(object):
         lock.quorum = self.quorum
         lock.factory = self
         return lock
-
-
 
 
 class RedLock(object):
@@ -102,12 +100,13 @@ class RedLock(object):
             # for small TTLs.
             drift = (self.ttl * CLOCK_DRIFT_FACTOR) + 2
 
-            if acquired_node_count >= self.quorum and self.ttl > (elapsed_milliesconds + drift):
+            if acquired_node_count >= self.quorum and \
+               self.ttl > (elapsed_milliesconds + drift):
                 return True
             else:
                 for node in self.redis_nodes:
                     self.release_node(node)
-                time.sleep(random.randint(0, self.retry_delay)/1000)
+                time.sleep(random.randint(0, self.retry_delay) / 1000)
         return False
 
     def release(self):
