@@ -1,5 +1,3 @@
-\
-
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from codecs import open  # To use a consistent encoding
 from os import path
@@ -39,11 +37,10 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
@@ -60,7 +57,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='sample setuptools development',
+    keywords='redis lock distributed',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
@@ -71,12 +68,4 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
     install_requires=['redis'],
-
-    # List additional groups of dependencies here (e.g. development dependencies).
-    # You can install these using the following syntax, for example:
-    # $ pip install -e .[dev,test]
-    extras_require = {
-        'dev': ['check-manifest'],
-        'test': ['coverage'],
-    },
 )
