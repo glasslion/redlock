@@ -16,7 +16,7 @@ The `redlock.RedLock` class shares a similar API with the `threading.Lock` class
 
 ```python
 from redlock import RedLock
-lock =  RedLock()
+lock =  RedLock("distributed_lock")
 lock.acquire()
 lock.release()
 ```
