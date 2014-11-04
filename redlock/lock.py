@@ -24,7 +24,7 @@ RELEASE_LUA_SCRIPT = """
 
 class RedLockFactory(object):
 
-    def __init__(self):
+    def __init__(self , connections):
         self.redis_nodes = []
 
         for conn in connections:
@@ -37,6 +37,7 @@ class RedLockFactory(object):
         lock = RedLock(created_by_factory=True, **kwargs)
         lock.redis_nodes = self.redis_nodes
         lock.quorum = self.quorum
+        lock.factory = self
         return lock
 
 
@@ -47,7 +48,7 @@ class RedLock(object):
     """
     """
 
-    def __init__(self, resource, connections,
+    def __init__(self, resource=None, connections=None,
                  retry_times=DEFAULT_RETRY_TIMES,
                  retry_delay=DEFAULT_RETRY_DELAY,
                  ttl=DEFAULT_TTL,
@@ -59,6 +60,7 @@ class RedLock(object):
         self.ttl = ttl
 
         if created_by_factory:
+            self.factory = None
             return
 
         self.redis_nodes = []
