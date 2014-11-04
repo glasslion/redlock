@@ -31,6 +31,15 @@ class RedLockFactory(object):
             node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
+            self.quorum = len(self.redis_nodes) / 2 + 1
+
+    def create_lock(self, **kwargs):
+        lock = RedLock(created_by_factory=True, **kwargs)
+        lock.redis_nodes = self.redis_nodes
+        lock.quorum = self.quorum
+        return lock
+
+
 
 
 class RedLock(object):
@@ -41,12 +50,16 @@ class RedLock(object):
     def __init__(self, resource, connections,
                  retry_times=DEFAULT_RETRY_TIMES,
                  retry_delay=DEFAULT_RETRY_DELAY,
-                 ttl=DEFAULT_TTL):
+                 ttl=DEFAULT_TTL,
+                 created_by_factory=False):
 
         self.resource = resource
         self.retry_times = retry_times
         self.retry_delay = retry_delay
         self.ttl = ttl
+
+        if created_by_factory:
+            return
 
         self.redis_nodes = []
 
