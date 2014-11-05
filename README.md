@@ -1,5 +1,4 @@
-RedLock
-=======
+![enter image description here](https://github.com/glasslion/redlock/raw/master/docs/assets/redlock-small.png)
 
 ## RedLock - Distributed locks with Redis and Python
 
