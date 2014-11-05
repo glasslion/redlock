@@ -21,6 +21,8 @@ RELEASE_LUA_SCRIPT = """
     end
 """
 
+class RedLockReleaseError(Exception):
+    pass
 
 class RedLockFactory(object):
 
@@ -33,8 +35,8 @@ class RedLockFactory(object):
             self.redis_nodes.append(node)
             self.quorum = len(self.redis_nodes) // 2 + 1
 
-    def create_lock(self, **kwargs):
-        lock = RedLock(created_by_factory=True, **kwargs)
+    def create_lock(self, resource, **kwargs):
+        lock = RedLock(resource=resource, created_by_factory=True, **kwargs)
         lock.redis_nodes = self.redis_nodes
         lock.quorum = self.quorum
         lock.factory = self
@@ -46,7 +48,7 @@ class RedLock(object):
     """
     """
 
-    def __init__(self, resource=None, connections=None,
+    def __init__(self, resource, connections=None,
                  retry_times=DEFAULT_RETRY_TIMES,
                  retry_delay=DEFAULT_RETRY_DELAY,
                  ttl=DEFAULT_TTL,
@@ -62,6 +64,14 @@ class RedLock(object):
             return
 
         self.redis_nodes = []
+        # If the connections parameter is not provided,
+        # use redis://127.0.0.1:6379/0
+        if connections is None:
+            connections = {
+                host='localhost',
+                port=6379,
+                db=0,
+            }
 
         for conn in connections:
             node = redis.StrictRedis(**conn)
