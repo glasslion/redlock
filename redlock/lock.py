@@ -68,9 +68,9 @@ class RedLock(object):
         # use redis://127.0.0.1:6379/0
         if connections is None:
             connections = {
-                host='localhost',
-                port=6379,
-                db=0,
+                'host': ' localhost',
+                'port': 6379,
+                'db': 0,
             }
 
         for conn in connections:
