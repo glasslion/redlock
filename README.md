@@ -1,4 +1,4 @@
-![enter image description here](https://github.com/glasslion/redlock/raw/master/docs/assets/redlock-small.png)
+![RedLock logo](https://github.com/glasslion/redlock/raw/master/docs/assets/redlock-small.png)
 
 ## RedLock - Distributed locks with Redis and Python
 
@@ -17,6 +17,17 @@ The `redlock.RedLock` class shares a similar API with the `threading.Lock` class
 from redlock import RedLock
 lock =  RedLock("distributed_lock")
 lock.acquire()
+do_something()
 lock.release()
+```
+
+### With Statement / Context Manager 
+
+As with `threading.Lock`, `redlock.RedLock` objects are context managers thus support the [With Statement](https://docs.python.org/2/reference/datamodel.html#context-managers). Thsi way is more pythonic and recommended.
+
+```python
+from redlock import RedLock
+with RedLock("distributed_lock"):
+    do_something()
 ```
 
