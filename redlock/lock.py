@@ -26,10 +26,10 @@ class RedLockReleaseError(Exception):
 
 class RedLockFactory(object):
 
-    def __init__(self, connections):
+    def __init__(self, connection_details):
         self.redis_nodes = []
 
-        for conn in connections:
+        for conn in connection_details:
             node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
@@ -48,7 +48,7 @@ class RedLock(object):
     """
     """
 
-    def __init__(self, resource, connections=None,
+    def __init__(self, resource, connection_details=None,
                  retry_times=DEFAULT_RETRY_TIMES,
                  retry_delay=DEFAULT_RETRY_DELAY,
                  ttl=DEFAULT_TTL,
@@ -64,16 +64,16 @@ class RedLock(object):
             return
 
         self.redis_nodes = []
-        # If the connections parameter is not provided,
+        # If the connection_details parameter is not provided,
         # use redis://127.0.0.1:6379/0
-        if connections is None:
-            connections = {
+        if connection_details is None:
+            connection_details = {
                 'host': ' localhost',
                 'port': 6379,
                 'db': 0,
             }
 
-        for conn in connections:
+        for conn in connection_details:
             node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
