@@ -5,8 +5,13 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+try:
+    with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+        long_description = f.read()
+except FileNotFoundError:
+    # We use markdown for documentation. The restructured Text version 
+    # is only used for pypi.
+    long_description = ""
 
 
 setup(
