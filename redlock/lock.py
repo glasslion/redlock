@@ -21,8 +21,10 @@ RELEASE_LUA_SCRIPT = """
     end
 """
 
+
 class RedLockReleaseError(Exception):
     pass
+
 
 class RedLockFactory(object):
 

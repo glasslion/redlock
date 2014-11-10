@@ -1,4 +1,5 @@
-from redlock import RedLock, RedLockFactory
+from redlock import RedLockFactory
+
 
 def test_factory_create():
     factory = RedLockFactory([{"host": "localhost"}])
@@ -9,6 +10,5 @@ def test_factory_create():
     assert factory.quorum == lock.quorum
     assert lock.ttl == 500
     assert lock.retry_times == 5
-    assert lock.ttl ==500
     assert lock.retry_delay == 100
     assert lock.factory == factory
