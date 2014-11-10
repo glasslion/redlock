@@ -1,2 +1,2 @@
 from .lock import RedLock, RedLockFactory
-__VERSION__ = '0.2.0'
+__VERSION__ = '1.0.0'
