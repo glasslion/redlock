@@ -56,13 +56,13 @@ docs:
 	open docs/_build/html/index.html
 
 release: clean
-	pandoc --from=markdown --to=rst --output=README.rst README.md
+	pandoc --from=markdown_github --to=rst --output=README.rst README.md
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
-	rm README.rst
+	-rm README.rst
 
 dist: clean
-	pandoc --from=markdown --to=rst --output=README.rst README.md
+	pandoc --from=markdown_github --to=rst --output=README.rst README.md
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
