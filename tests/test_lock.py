@@ -2,6 +2,14 @@ from redlock import RedLock
 import time
 
 
+def test_default_connection_details_value():
+    """
+    Test that RedLock instance could be created with
+    default value of `connection_details` argument.
+    """
+    lock = RedLock("test_simple_lock")
+
+
 def test_simple_lock():
     """
     Test a RedLock can be acquired.

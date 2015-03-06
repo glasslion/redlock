@@ -88,11 +88,11 @@ class RedLock(object):
         # If the connection_details parameter is not provided,
         # use redis://127.0.0.1:6379/0
         if connection_details is None:
-            connection_details = {
-                'host': ' localhost',
+            connection_details = [{
+                'host': 'localhost',
                 'port': 6379,
                 'db': 0,
-            }
+            }]
 
         for conn in connection_details:
             node = redis.StrictRedis(**conn)
