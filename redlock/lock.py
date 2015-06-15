@@ -43,7 +43,11 @@ class RedLockFactory(object):
         self.redis_nodes = []
 
         for conn in connection_details:
-            node = redis.StrictRedis(**conn)
+            if 'url' in conn:
+                url = conn.pop('url')
+                node = redis.StrictRedis.from_url(url, **conn)
+            else:
+                node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
             self.quorum = len(self.redis_nodes) // 2 + 1
@@ -95,7 +99,11 @@ class RedLock(object):
             }]
 
         for conn in connection_details:
-            node = redis.StrictRedis(**conn)
+            if 'url' in conn:
+                url = conn.pop('url')
+                node = redis.StrictRedis.from_url(url, **conn)
+            else:
+                node = redis.StrictRedis(**conn)
             node._release_script = node.register_script(RELEASE_LUA_SCRIPT)
             self.redis_nodes.append(node)
         self.quorum = len(self.redis_nodes) // 2 + 1
