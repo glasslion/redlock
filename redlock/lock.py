@@ -106,6 +106,14 @@ class RedLock(object):
     def __exit__(self, exc_type, exc_value, traceback):
         self.release()
 
+    def _total_ms(self, delta):
+        """
+        Get the total number of milliseconds in a timedelta object with
+        microsecond precision.
+        """
+        delta_seconds = delta.seconds + delta.days * 24 * 3600
+        return (delta.microseconds + delta_seconds * 10**6) / 10**3
+
     def acquire_node(self, node):
         """
         accquire a single redis ndoe
@@ -134,7 +142,7 @@ class RedLock(object):
                     acquired_node_count += 1
 
             end_time = datetime.utcnow()
-            elapsed_milliesconds = (end_time - start_time).microseconds // 1000
+            elapsed_milliseconds = self._total_ms(end_time - start_time)
 
             # Add 2 milliseconds to the drift to account for Redis expires
             # precision, which is 1 milliescond, plus 1 millisecond min drift
@@ -142,7 +150,7 @@ class RedLock(object):
             drift = (self.ttl * CLOCK_DRIFT_FACTOR) + 2
 
             if acquired_node_count >= self.quorum and \
-               self.ttl > (elapsed_milliesconds + drift):
+               self.ttl > (elapsed_milliseconds + drift):
                 return True
             else:
                 for node in self.redis_nodes:
