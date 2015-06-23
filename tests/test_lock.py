@@ -20,6 +20,16 @@ def test_simple_lock():
     assert locked == True
 
 
+def test_from_url():
+    """
+    Test a RedLock can be acquired via from_url.
+    """
+    lock = RedLock("test_from_url", [{"url": "redis://localhost/0"}], ttl=1000)
+    locked = lock.acquire()
+    lock.release()
+    assert locked == True
+
+
 def test_context_manager():
     """
     Test a RedLock can be released by the context manager automically.
