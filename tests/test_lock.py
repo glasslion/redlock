@@ -1,4 +1,4 @@
-from redlock import RedLock
+from redlock import RedLock, RedLockError
 import time
 
 
@@ -33,6 +33,15 @@ def test_context_manager():
     lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=1000)
     locked = lock.acquire()
     assert locked == True
+
+    # try to lock again within a with block
+    try:
+        with RedLock("test_context_manager", [{"host": "localhost"}]):
+            # shouldn't be allowed since someone has the lock already
+            assert False
+    except RedLockError:
+        # we expect this call to error out
+        pass
 
     lock.release()
 

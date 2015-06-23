@@ -101,7 +101,8 @@ class RedLock(object):
         self.quorum = len(self.redis_nodes) // 2 + 1
 
     def __enter__(self):
-        self.acquire()
+        if not self.acquire():
+            raise RedLockError('failed to acquire lock')
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.release()
