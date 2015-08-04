@@ -43,7 +43,9 @@ class RedLockFactory(object):
         self.redis_nodes = []
 
         for conn in connection_details:
-            if 'url' in conn:
+            if isinstance(conn, redis.StrictRedis):
+                node = conn
+            elif 'url' in conn:
                 url = conn.pop('url')
                 node = redis.StrictRedis.from_url(url, **conn)
             else:
@@ -99,7 +101,9 @@ class RedLock(object):
             }]
 
         for conn in connection_details:
-            if 'url' in conn:
+            if isinstance(conn, redis.StrictRedis):
+                node = conn
+            elif 'url' in conn:
                 url = conn.pop('url')
                 node = redis.StrictRedis.from_url(url, **conn)
             else:
