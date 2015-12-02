@@ -1,5 +1,7 @@
-from redlock import RedLock, RedLockError
+from redlock import RedLock, ReentrantRedLock, RedLockError
+import mock
 import time
+import unittest
 
 
 def test_default_connection_details_value():
@@ -82,3 +84,56 @@ def test_lock_expire():
     lock3 = RedLock("test_lock_expire", [{"host": "localhost"}], ttl=1000)
     locked = lock3.acquire()
     assert locked == False
+
+
+class TestLock(unittest.TestCase):
+    def setUp(self):
+        super(TestLock, self).setUp()
+        self.redlock = mock.patch.object(RedLock, '__init__', return_value=None).start()
+        self.redlock_acquire = mock.patch.object(RedLock, 'acquire').start()
+        self.redlock_release = mock.patch.object(RedLock, 'release').start()
+        self.redlock_acquire.return_value = True
+
+    def tearDown(self):
+        mock.patch.stopall()
+
+    def test_passthrough(self):
+        test_lock = ReentrantRedLock('')
+        test_lock.acquire()
+        test_lock.release()
+
+        self.redlock.assert_called_once_with('')
+        self.redlock_acquire.assert_called_once_with()
+        self.redlock_release.assert_called_once_with()
+
+    def test_reentrant(self):
+        test_lock = ReentrantRedLock('')
+        test_lock.acquire()
+        test_lock.acquire()
+        test_lock.release()
+        test_lock.release()
+
+        self.redlock.assert_called_once_with('')
+        self.redlock_acquire.assert_called_once_with()
+        self.redlock_release.assert_called_once_with()
+
+    def test_reentrant_n(self):
+        test_lock = ReentrantRedLock('')
+        for _ in range(10):
+            test_lock.acquire()
+        for _ in range(10):
+            test_lock.release()
+
+        self.redlock.assert_called_once_with('')
+        self.redlock_acquire.assert_called_once_with()
+        self.redlock_release.assert_called_once_with()
+
+    def test_no_release(self):
+        test_lock = ReentrantRedLock('')
+        test_lock.acquire()
+        test_lock.acquire()
+        test_lock.release()
+
+        self.redlock.assert_called_once_with('')
+        self.redlock_acquire.assert_called_once_with()
+        self.redlock_release.assert_not_called()
