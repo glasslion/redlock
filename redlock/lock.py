@@ -33,7 +33,7 @@ class RedLockError(Exception):
 
 class RedLockFactory(object):
     """
-    A Factory class that help reuse multiple Redis conections.
+    A Factory class that helps reuse multiple Redis connections.
     """
 
     def __init__(self, connection_details):
@@ -129,13 +129,13 @@ class RedLock(object):
 
     def acquire_node(self, node):
         """
-        accquire a single redis ndoe
+        acquire a single redis node
         """
         return node.set(self.resource, self.lock_key, nx=True, px=self.ttl)
 
     def release_node(self, node):
         """
-        release a single redis ndoe
+        release a single redis node
         """
         # use the lua script to release the lock in a safe way
         node._release_script(keys=[self.resource], args=[self.lock_key])
