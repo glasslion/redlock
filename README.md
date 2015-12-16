@@ -55,10 +55,10 @@ with RedLock("distributed_lock"):
 from redlock import RedLock
 with RedLock("distributed_lock", 
               connection_details=[
-                {host='xxx.xxx.xxx.xxx', port=6379, db=0},
-                {host='xxx.xxx.xxx.xxx', port=6379, db=0},
-                {host='xxx.xxx.xxx.xxx', port=6379, db=0},
-                {host='xxx.xxx.xxx.xxx', port=6379, db=0},
+                {'host': 'xxx.xxx.xxx.xxx', 'port': 6379, 'db': 0},
+                {'host': 'xxx.xxx.xxx.xxx', 'port': 6379, 'db': 0},
+                {'host': 'xxx.xxx.xxx.xxx', 'port': 6379, 'db': 0},
+                {'host': 'xxx.xxx.xxx.xxx', 'port': 6379, 'db': 0},
               ]
             ):
     do_something()
@@ -75,10 +75,10 @@ Usually the connection details of the Redis nodes are fixed. `RedLockFactory` ca
 from redlock import RedLockFactory
 factory = RedLockFactory(
     connection_details=[
-        {host='xxx.xxx.xxx.xxx'},
-        {host='xxx.xxx.xxx.xxx'},
-        {host='xxx.xxx.xxx.xxx'},
-        {host='xxx.xxx.xxx.xxx'},
+        {'host': 'xxx.xxx.xxx.xxx'},
+        {'host': 'xxx.xxx.xxx.xxx'},
+        {'host': 'xxx.xxx.xxx.xxx'},
+        {'host': 'xxx.xxx.xxx.xxx'},
     ])
 
 with factory.create_lock("distributed_lock"):
