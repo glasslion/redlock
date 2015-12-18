@@ -174,3 +174,27 @@ class RedLock(object):
     def release(self):
         for node in self.redis_nodes:
             self.release_node(node)
+
+
+class ReentrantRedLock(RedLock):
+    def __init__(self, *args, **kwargs):
+        super(ReentrantRedLock, self).__init__(*args, **kwargs)
+        self._acquired = 0
+
+    def acquire(self):
+        if self._acquired == 0:
+            result = super(ReentrantRedLock, self).acquire()
+            if result:
+                self._acquired += 1
+            return result
+        else:
+            self._acquired += 1
+            return True
+
+    def release(self):
+        if self._acquired > 0:
+            self._acquired -= 1
+            if self._acquired == 0:
+                return super(ReentrantRedLock, self).release()
+            return True
+        return False
