@@ -131,14 +131,20 @@ class RedLock(object):
         """
         acquire a single redis node
         """
-        return node.set(self.resource, self.lock_key, nx=True, px=self.ttl)
+        try:
+            return node.set(self.resource, self.lock_key, nx=True, px=self.ttl)
+        except (redis.exceptions.ConnectionError, redis.exceptions.TimeoutError):
+            return False
 
     def release_node(self, node):
         """
         release a single redis node
         """
         # use the lua script to release the lock in a safe way
-        node._release_script(keys=[self.resource], args=[self.lock_key])
+        try:
+            node._release_script(keys=[self.resource], args=[self.lock_key])
+        except (redis.exceptions.ConnectionError, redis.exceptions.TimeoutError):
+            pass
 
     def acquire(self):
 
