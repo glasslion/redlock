@@ -113,8 +113,10 @@ class RedLock(object):
         self.quorum = len(self.redis_nodes) // 2 + 1
 
     def __enter__(self):
-        if not self.acquire():
+        acquired, validity = self.acquire_with_validity()
+        if not acquired:
             raise RedLockError('failed to acquire lock')
+        return validity
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.release()
@@ -141,6 +143,13 @@ class RedLock(object):
         node._release_script(keys=[self.resource], args=[self.lock_key])
 
     def acquire(self):
+        acquired, validity = self._acquire()
+        return acquired
+
+    def acquire_with_validity(self):
+        return self._acquire()
+
+    def _acquire(self):
 
         # lock_key should be random and unique
         self.lock_key = uuid.uuid4().hex
@@ -162,14 +171,14 @@ class RedLock(object):
             # for small TTLs.
             drift = (self.ttl * CLOCK_DRIFT_FACTOR) + 2
 
-            if acquired_node_count >= self.quorum and \
-               self.ttl > (elapsed_milliseconds + drift):
-                return True
+            validity = self.ttl - (elapsed_milliseconds + drift)
+            if acquired_node_count >= self.quorum and validity > 0:
+                return True, validity
             else:
                 for node in self.redis_nodes:
                     self.release_node(node)
                 time.sleep(random.randint(0, self.retry_delay) / 1000)
-        return False
+        return False, 0
 
     def release(self):
         for node in self.redis_nodes:
