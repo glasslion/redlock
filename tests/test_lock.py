@@ -137,3 +137,17 @@ class TestLock(unittest.TestCase):
         self.redlock.assert_called_once_with('')
         self.redlock_acquire.assert_called_once_with()
         self.redlock_release.assert_not_called()
+
+
+def test_lock_with_multi_backend():
+    """
+    Test a RedLock can be acquired when at least N/2+1 redis instances are alive.
+    Set redis instance with port 6380 down or debug sleep during test.
+    """
+    lock = RedLock("test_simple_lock", connection_details=[
+        {"host": "localhost", "port": 6379, "db": 0, "socket_timeout": 0.2},
+        {"host": "localhost", "port": 6379, "db": 1, "socket_timeout": 0.2},
+        {"host": "localhost", "port": 6380, "db": 0, "socket_timeout": 0.2}], ttl=1000)
+    locked = lock.acquire()
+    lock.release()
+    assert locked == True
