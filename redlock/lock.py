@@ -160,7 +160,7 @@ class RedLock(object):
         # lock_key should be random and unique
         self.lock_key = uuid.uuid4().hex
 
-        for retry in range(self.retry_times):
+        for retry in range(self.retry_times + 1):
             acquired_node_count = 0
             start_time = datetime.utcnow()
 
