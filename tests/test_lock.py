@@ -1,4 +1,5 @@
 from redlock import RedLock, ReentrantRedLock, RedLockError
+from redlock.lock import CLOCK_DRIFT_FACTOR
 import mock
 import time
 import unittest
@@ -22,6 +23,17 @@ def test_simple_lock():
     assert locked == True
 
 
+def test_lock_with_validity():
+    """
+    Test a RedLock can be acquired and the lock validity is also retruned.
+    """
+    ttl = 1000
+    lock = RedLock("test_simple_lock", [{"host": "localhost"}], ttl=ttl)
+    locked, validity = lock.acquire_with_validity()
+    lock.release()
+    assert locked == True
+    assert 0 < validity < ttl - ttl * CLOCK_DRIFT_FACTOR - 2
+
 def test_from_url():
     """
     Test a RedLock can be acquired via from_url.
@@ -37,12 +49,14 @@ def test_context_manager():
     Test a RedLock can be released by the context manager automically.
 
     """
-    with RedLock("test_context_manager", [{"host": "localhost"}], ttl=1000):
-        lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=1000)
+    ttl = 1000
+    with RedLock("test_context_manager", [{"host": "localhost"}], ttl=ttl) as validity:
+        assert 0 < validity < ttl - ttl * CLOCK_DRIFT_FACTOR - 2
+        lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=ttl)
         locked = lock.acquire()
         assert locked == False
 
-    lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=1000)
+    lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=ttl)
     locked = lock.acquire()
     assert locked == True
 
