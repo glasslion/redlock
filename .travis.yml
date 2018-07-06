@@ -15,3 +15,7 @@ script:  py.test
 
 services:
   - redis-server
+
+matrix:
+  allow_failures:
+    - python: "3.7"
