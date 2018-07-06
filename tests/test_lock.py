@@ -4,6 +4,8 @@ import mock
 import time
 import unittest
 
+import pytest
+
 
 def test_default_connection_details_value():
     """
@@ -21,6 +23,35 @@ def test_simple_lock():
     locked = lock.acquire()
     lock.release()
     assert locked == True
+
+
+def test_lock_is_locked():
+    lock = RedLock("test_lock_is_locked")
+    # Clear possible initial states
+    [node.delete(lock.resource) for node in lock.redis_nodes]
+
+    assert lock.locked() is False
+
+    lock.acquire()
+    assert lock.locked() is True
+
+    lock.release()
+    assert lock.locked() is False
+
+
+def test_locked_span_lock_instances():
+    lock1 = RedLock("test_locked_span_lock_instances")
+    lock2 = RedLock("test_locked_span_lock_instances")
+    # Clear possible initial states
+    [node.delete(lock1.resource) for node in lock1.redis_nodes]
+
+    assert lock1.locked() == lock2.locked() == False
+    lock1.acquire()
+
+    assert lock1.locked() == lock2.locked() == True
+
+    lock1.release()
+    assert lock1.locked() == lock2.locked() == False
 
 
 def test_lock_with_validity():
