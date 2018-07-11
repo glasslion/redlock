@@ -129,6 +129,12 @@ class RedLock(object):
         delta_seconds = delta.seconds + delta.days * 24 * 3600
         return (delta.microseconds + delta_seconds * 10**6) / 10**3
 
+    def locked(self):
+        for node in self.redis_nodes:
+            if node.get(self.resource):
+                return True
+        return False
+
     def acquire_node(self, node):
         """
         acquire a single redis node
