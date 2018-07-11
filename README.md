@@ -10,7 +10,7 @@ This library implements the RedLock algorithm introduced by [@antirez](http://an
 ### Yet another ...
 There are already a few redis based lock implementations in the Python world, e.g.  [retools](https://github.com/bbangert/retools),  [redis-lock](https://pypi.python.org/pypi/redis-lock/0.2.0). 
 
-However, these libraries can only work with *single-master* redis server. When the Redis master goes down, your application has to face a single point of failure . We can't rely on the master-slave replication, because Redis replication is asynchronous.
+However, these libraries can only work with *single-master* redis server. When the Redis master goes down, your application has to face a single point of failure. We can't rely on the master-slave replication, because Redis replication is asynchronous.
 
 > This is an obvious race condition with the master-slave replication model :
 >  1. Client A acquires the lock into the master.
