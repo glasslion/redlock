@@ -8,8 +8,8 @@ here = path.abspath(path.dirname(__file__))
 try:
     with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
         long_description = f.read()
-except (OSError, IOError) as e:
-    # We use markdown for documentation. The restructured Text version 
+except (OSError, IOError):
+    # We use markdown for documentation. The restructured Text version
     # is only used for pypi.
     long_description = ""
 

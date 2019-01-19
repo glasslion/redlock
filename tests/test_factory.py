@@ -4,7 +4,12 @@ from redlock import RedLockFactory
 def test_factory_create():
     factory = RedLockFactory([{"host": "localhost"}])
 
-    lock = factory.create_lock("test_factory_create", ttl=500, retry_times=5, retry_delay=100)
+    lock = factory.create_lock(
+        "test_factory_create",
+        ttl=500,
+        retry_times=5,
+        retry_delay=100,
+    )
 
     assert factory.redis_nodes == lock.redis_nodes
     assert factory.quorum == lock.quorum
