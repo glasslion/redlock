@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 try:
     with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
         long_description = f.read()
-except (OSError, IOError) as e:
+except (OSError, IOError):
     # We use markdown for documentation. The restructured Text version
     # is only used for pypi.
     long_description = ""
@@ -35,7 +35,7 @@ setup(
     # Choose your license
     license='MIT',
 
-    # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    # See https://pypi.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -51,13 +51,14 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
+        'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 
     # What does your project relate to?
@@ -71,5 +72,6 @@ setup(
     # project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=['redis'],
 )
