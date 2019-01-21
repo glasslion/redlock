@@ -1,5 +1,5 @@
 -r requirements.txt
-autopep8
 bpython
+flake8
 pytest
 mock

@@ -10,6 +10,9 @@ install:
   - "pip install ."
   - "pip install -r requirements-dev.txt"
 
+before_script:
+  - flake8
+
 # command to run tests, e.g. python setup.py test
 script:  py.test
 
