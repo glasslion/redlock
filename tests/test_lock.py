@@ -4,15 +4,13 @@ import mock
 import time
 import unittest
 
-import pytest
-
 
 def test_default_connection_details_value():
     """
     Test that RedLock instance could be created with
     default value of `connection_details` argument.
     """
-    lock = RedLock("test_simple_lock")
+    RedLock("test_simple_lock")
 
 
 def test_simple_lock():
@@ -22,7 +20,7 @@ def test_simple_lock():
     lock = RedLock("test_simple_lock", [{"host": "localhost"}], ttl=1000)
     locked = lock.acquire()
     lock.release()
-    assert locked == True
+    assert locked is True
 
 
 def test_lock_is_locked():
@@ -45,13 +43,13 @@ def test_locked_span_lock_instances():
     # Clear possible initial states
     [node.delete(lock1.resource) for node in lock1.redis_nodes]
 
-    assert lock1.locked() == lock2.locked() == False
+    assert lock1.locked() == lock2.locked() is False
     lock1.acquire()
 
-    assert lock1.locked() == lock2.locked() == True
+    assert lock1.locked() == lock2.locked() is True
 
     lock1.release()
-    assert lock1.locked() == lock2.locked() == False
+    assert lock1.locked() == lock2.locked() is False
 
 
 def test_lock_with_validity():
@@ -62,8 +60,9 @@ def test_lock_with_validity():
     lock = RedLock("test_simple_lock", [{"host": "localhost"}], ttl=ttl)
     locked, validity = lock.acquire_with_validity()
     lock.release()
-    assert locked == True
+    assert locked is True
     assert 0 < validity < ttl - ttl * CLOCK_DRIFT_FACTOR - 2
+
 
 def test_from_url():
     """
@@ -72,7 +71,7 @@ def test_from_url():
     lock = RedLock("test_from_url", [{"url": "redis://localhost/0"}], ttl=1000)
     locked = lock.acquire()
     lock.release()
-    assert locked == True
+    assert locked is True
 
 
 def test_context_manager():
@@ -85,11 +84,11 @@ def test_context_manager():
         assert 0 < validity < ttl - ttl * CLOCK_DRIFT_FACTOR - 2
         lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=ttl)
         locked = lock.acquire()
-        assert locked == False
+        assert locked is False
 
     lock = RedLock("test_context_manager", [{"host": "localhost"}], ttl=ttl)
     locked = lock.acquire()
-    assert locked == True
+    assert locked is True
 
     # try to lock again within a with block
     try:
@@ -111,8 +110,8 @@ def test_fail_to_lock_acquired():
     lock2_locked = lock2.acquire()
     lock1.release()
 
-    assert lock1_locked == True
-    assert lock2_locked == False
+    assert lock1_locked is True
+    assert lock2_locked is False
 
 
 def test_lock_expire():
@@ -123,12 +122,12 @@ def test_lock_expire():
     # Now lock1 has expired, we can accquire a lock
     lock2 = RedLock("test_lock_expire", [{"host": "localhost"}], ttl=1000)
     locked = lock2.acquire()
-    assert locked == True
+    assert locked is True
 
     lock1.release()
     lock3 = RedLock("test_lock_expire", [{"host": "localhost"}], ttl=1000)
     locked = lock3.acquire()
-    assert locked == False
+    assert locked is False
 
 
 class TestLock(unittest.TestCase):
@@ -195,4 +194,4 @@ def test_lock_with_multi_backend():
         {"host": "localhost", "port": 6380, "db": 0, "socket_timeout": 0.2}], ttl=1000)
     locked = lock.acquire()
     lock.release()
-    assert locked == True
+    assert locked is True

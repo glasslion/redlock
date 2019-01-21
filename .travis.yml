@@ -1,4 +1,6 @@
+dist: xenial
 language: python
+cache: pip
 python:
   - "3.7"
   - "3.6"
@@ -10,12 +12,11 @@ install:
   - "pip install ."
   - "pip install -r requirements-dev.txt"
 
+before_script:
+  - flake8
+
 # command to run tests, e.g. python setup.py test
 script:  py.test
 
 services:
   - redis-server
-
-matrix:
-  allow_failures:
-    - python: "3.7"

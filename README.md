@@ -8,7 +8,7 @@ This library implements the RedLock algorithm introduced by [@antirez](http://an
 
 
 ### Yet another ...
-There are already a few redis based lock implementations in the Python world, e.g.  [retools](https://github.com/bbangert/retools),  [redis-lock](https://pypi.python.org/pypi/redis-lock/0.2.0). 
+There are already a few redis based lock implementations in the Python world, e.g.  [retools](https://github.com/bbangert/retools),  [redis-lock](https://pypi.python.org/pypi/redis-lock/0.2.0).
 
 However, these libraries can only work with *single-master* redis server. When the Redis master goes down, your application has to face a single point of failure. We can't rely on the master-slave replication, because Redis replication is asynchronous.
 
@@ -31,7 +31,7 @@ The `redlock.RedLock` class shares a similar API with the `threading.Lock` class
 
 ```python
 from redlock import RedLock
-# By default, if no redis connection details are 
+# By default, if no redis connection details are
 # provided, RedLock uses redis://127.0.0.1:6379/0
 lock =  RedLock("distributed_lock")
 lock.acquire()
@@ -53,7 +53,7 @@ with RedLock("distributed_lock"):
 
 ```python
 from redlock import RedLock
-with RedLock("distributed_lock", 
+with RedLock("distributed_lock",
               connection_details=[
                 {'host': 'xxx.xxx.xxx.xxx', 'port': 6379, 'db': 0},
                 {'host': 'xxx.xxx.xxx.xxx', 'port': 6379, 'db': 0},
