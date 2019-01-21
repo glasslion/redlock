@@ -3,12 +3,17 @@ Distributed locks with Redis
 Redis doc: http://redis.io/topics/distlock
 """
 from __future__ import division
-from datetime import datetime
 import random
 import time
 import uuid
 
 import redis
+
+try:
+    from time import monotonic
+except ImportError:
+    # Python 2.7
+    from time import time as monotonic
 
 
 DEFAULT_RETRY_TIMES = 3
@@ -121,14 +126,6 @@ class RedLock(object):
     def __exit__(self, exc_type, exc_value, traceback):
         self.release()
 
-    def _total_ms(self, delta):
-        """
-        Get the total number of milliseconds in a timedelta object with
-        microsecond precision.
-        """
-        delta_seconds = delta.seconds + delta.days * 24 * 3600
-        return (delta.microseconds + delta_seconds * 10**6) / 10**3
-
     def locked(self):
         for node in self.redis_nodes:
             if node.get(self.resource):
@@ -168,15 +165,15 @@ class RedLock(object):
 
         for retry in range(self.retry_times + 1):
             acquired_node_count = 0
-            start_time = datetime.utcnow()
+            start_time = monotonic()
 
             # acquire the lock in all the redis instances sequentially
             for node in self.redis_nodes:
                 if self.acquire_node(node):
                     acquired_node_count += 1
 
-            end_time = datetime.utcnow()
-            elapsed_milliseconds = self._total_ms(end_time - start_time)
+            end_time = monotonic()
+            elapsed_milliseconds = (end_time - start_time) * 10**3
 
             # Add 2 milliseconds to the drift to account for Redis expires
             # precision, which is 1 milliescond, plus 1 millisecond min drift
