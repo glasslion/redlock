@@ -19,7 +19,6 @@ clean-build:
 	rm -fr build/
 	rm -fr dist/
 	rm -fr *.egg-info
-	-rm README.rst
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -56,13 +55,10 @@ docs:
 	open docs/_build/html/index.html
 
 release: clean
-	pandoc --from=markdown_github --to=rst --output=README.rst README.md
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
-	-rm README.rst
 
 dist: clean
-	pandoc --from=markdown_github --to=rst --output=README.rst README.md
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
